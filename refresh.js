@@ -17,6 +17,9 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: '<your-identity-pool-id-here>',
 });
 
+// API Gateway endpoint
+var api_endpoint = '<your-api-gateway-endpoint-here>';
+
 var dynamodb = new AWS.DynamoDB();
 var params = { TableName: 'VoteAppAggregates' };
 
@@ -39,19 +42,19 @@ var init = [
       value: 1,
       color: "#e74c3c",
       highlight: "#c0392b",
-      label: "Red"
+      label: "Mobile/Tablet"
   },
   {
       value: 1,
       color: "#2ecc71",
       highlight: "#27ae60",
-      label: "Green"
+      label: "PC"
   },
   {
       value: 1,
       color: "#3498db",
       highlight: "#2980b9",
-      label: "Blue"
+      label: "Console"
   }
 ];
 
@@ -76,13 +79,13 @@ function getData() {
       var blueCount = 0;
 
       for (var i in data['Items']) {
-        if (data['Items'][i]['VotedFor']['S'] == "RED") {
+        if (data['Items'][i]['VotedFor']['S'] == "LOLWUT") {
           redCount = parseInt(data['Items'][i]['Vote']['N']);
         }
-        if (data['Items'][i]['VotedFor']['S'] == "GREEN") {
+        if (data['Items'][i]['VotedFor']['S'] == "PCMR") {
           greenCount = parseInt(data['Items'][i]['Vote']['N']);
         }
-        if (data['Items'][i]['VotedFor']['S'] == "BLUE") {
+        if (data['Items'][i]['VotedFor']['S'] == "PEASANT") {
           blueCount = parseInt(data['Items'][i]['Vote']['N']);
         }
       }
@@ -92,19 +95,19 @@ function getData() {
             value: redCount,
             color:"#e74c3c",
             highlight: "#c0392b",
-            label: "Red"
+            label: "Mobile/Tablet"
         },
         {
             value: greenCount,
             color: "#2ecc71",
             highlight: "#27ae60",
-            label: "Green"
+            label: "PC"
         },
         {
             value: blueCount,
             color: "#3498db",
             highlight: "#2980b9",
-            label: "Blue"
+            label: "Console"
         }
       ];
 
@@ -123,3 +126,31 @@ function getData() {
     }
   });
 }
+
+/* Voting from the page */
+function make_vote(voteFor) {
+    var buttons = $('#clicky-buttons'),
+        buttonHTML = buttons.html();
+
+    buttons.html('Thanks, sending...');
+
+    $.ajax({
+        type: 'post',
+        url: api_endpoint,
+        dataType: 'json',
+        success: function (data) {
+            if (!data.status) {
+                buttons.html('There was a problem, please try again:<br/>' + buttonHTML);
+            } else if (data.status === 'error') {
+                buttons.html(data.message + '<br/>' + buttonHTML);
+            } else if (data.status === 'success') {
+                buttons.html('Thanks, your vote has been received!');
+            }
+        },
+        data: {'Vote': voteFor}
+    });
+}
+
+$('#clicky-buttons button').on('click.vote', function() {
+    make_vote($(this).attr('data-vote'));
+});

@@ -9,3 +9,17 @@ a {
 .lead {
   color: #c6c6c6;
 }
+
+.pcmr {
+    color: #2ecc71;
+}
+.peasant {
+    color: #3498db;
+}
+.lolwut {
+    color: #e74c3c;
+}
+
+#clicky-buttons .btn {
+    margin: 5px;
+}
