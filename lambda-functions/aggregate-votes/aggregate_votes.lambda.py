@@ -3,9 +3,10 @@ from __future__ import print_function
 import boto3
 import json
 import logging
+import os
 
-AWS_REGION = 'eu-west-1'
-TABLE_NAME = 'VoteAppAggregates'
+AWS_REGION = os.environ['AWS_REGION']
+TABLE_NAME = os.environ['TABLE_NAME']
 VOTE_CHOICES = (
     'LOLWUT',
     'PCMR',

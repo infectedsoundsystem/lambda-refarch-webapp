@@ -4,10 +4,11 @@ import boto3
 import json
 import logging
 import math
+import os
 import random
 
-AWS_REGION = 'eu-west-1'
-TABLE_NAME = 'VoteApp'
+AWS_REGION = os.environ['AWS_REGION']
+TABLE_NAME = os.environ['TABLE_NAME']
 VOTE_CHOICES = (
     'LOLWUT',
     'PCMR',
