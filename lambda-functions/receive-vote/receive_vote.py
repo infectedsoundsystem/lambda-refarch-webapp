@@ -43,7 +43,7 @@ def lambda_handler(event, context):
         voted_for_hash = voted_for + '.' + str(math.floor((random.random() * 10) + 1))
 
         try:
-            dynamodb.updateItem(
+            dynamodb.update_item(
                 TableName=TABLE_NAME,
                 Key={
                     'VotedFor': {

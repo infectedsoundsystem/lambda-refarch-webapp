@@ -52,7 +52,7 @@ def lambda_handler(event, context):
             continue
 
         try:
-            dynamodb.updateItem(
+            dynamodb.update_item(
                 TableName=TABLE_NAME,
                 Key={
                     'VotedFor': {
