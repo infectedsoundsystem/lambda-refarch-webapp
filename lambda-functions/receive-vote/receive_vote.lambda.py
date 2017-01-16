@@ -25,7 +25,16 @@ def lambda_handler(event, context):
 
     logger.debug(json.dumps(event, indent=4, separators=(',', ': ')))
 
-    voted_for = event.get('Vote', '').upper().strip()
+    try:
+        # event['body'] should be like so: "Vote=PCMR"
+        voted_for = event.get('body').split("=")[1].upper().strip()
+    except Exception as e:
+        logger.error('Malformed body in event')
+        logger.error(e)
+        return {
+            'status': 'error',
+            'message': 'Oops, please try again',
+        }
 
     # Test that the vote received is a valid choice
     if voted_for in VOTE_CHOICES:
