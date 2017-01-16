@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Base resources for Voting App
+
+Parameters:
+
+    Subdomain:
+        Default: vote
+        Description: Subdomain of hosted zone to create
+        MinLength: 3
+        MaxLength: 40
+        Type: String
+
+    HostedZone:
+        Default: "1f55.uk"
+        Description: Name of the Route 53 hosted zone to create the subdomain under
+        Type: String
+
+    HostedZoneId:
+        Default: Z1XEY900QGE2A8
+        Description: ID of the Route 53 hosted zone to create the subdomain under
+        Type: String
+
+
+Resources:
+
+    WebsiteBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            AccessControl: PublicRead
+            BucketName: !Join [ ".", [ !Ref Subdomain, !Ref HostedZone ] ]
+            WebsiteConfiguration:
+                IndexDocument: index.html
+                ErrorDocument: error.html
+
+    WebsiteBucketPolicy:
+        Type: AWS::S3::BucketPolicy
+        Properties:
+            Bucket: !Ref WebsiteBucket
+            PolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Action:
+                            - s3:GetObject
+                        Effect: Allow
+                        Resource: !Join [ "", [ "arn:aws:s3:::", !Ref WebsiteBucket, "/*" ] ]
+                        Principal: 
+                            AWS: "*"
+                        Sid: PublicReadForGetBucketObjects
+
+    LambdaBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: !Join [ "", [ !Ref Subdomain, "-lambda-packages.", !Ref HostedZone ] ]
+
+    Route53Record:
+        Type: AWS::Route53::RecordSet
+        Properties:
+            HostedZoneId: !Ref HostedZoneId
+            Name: !Join [ ".", [ !Ref Subdomain, !Ref HostedZone ] ]
+            ResourceRecords:
+                -
+                    !Join [ "", [ !Ref WebsiteBucket, ".s3-website-", !Ref "AWS::Region", ".amazonaws.com" ] ]
+            TTL: 300
+            Type: CNAME
+
+
+Outputs:
+
+    WebsiteBucketNameOutput:
+        Description: Website bucket name
+        Value: !Ref WebsiteBucket
+        Export:
+            Name: VoteWebsiteBucketName
+
+    WebsiteBucketDNSNameOutput:
+        Description: Website bucket DNS name
+        Value: !Join [ "", [ !Ref WebsiteBucket, ".s3-website-", !Ref "AWS::Region", ".amazonaws.com" ] ]
+        Export:
+            Name: VoteWebsiteBucketDNSName
+
+    LambdaBucketNameOutput:
+        Description: Lambda package bucket name
+        Value: !Ref LambdaBucket
+        Export:
+            Name: VoteLambdaBucketName
+
+    Route53DNSNameOutput:
+        Description: Route 53 DNS name for website
+        Value: !Ref Route53Record
+        Export:
+            Name: VoteRoute53DNSName

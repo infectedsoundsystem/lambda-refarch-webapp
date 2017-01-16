@@ -1,0 +1,173 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: SAM template for Voting App serverless application resources
+Transform: 'AWS::Serverless-2016-10-31'
+
+# @todo - CF not currently accepting non-string literal CodeUri values
+# https://github.com/awslabs/serverless-application-model/issues/22
+#Parameters:
+
+    # !Join doesn't support !ImportValue so can't import this value from the other stack
+    #LambdaS3BucketName:
+    #    Default: "vote-lambda-packages."
+    #    Description: The name of the S3 bucket created to hold the Lambda packages
+    #    Type: String
+
+Resources:
+
+    CreateIdentityPoolFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: "s3://done-lambda-packages.1f55.uk/create-identity-pool.zip"
+            # @todo - CF not currently accepting non-string literal CodeUri values
+            # https://github.com/awslabs/serverless-application-model/issues/22
+            #CodeUri: !Join [ "", [ "s3://", !Ref LambdaS3BucketName, "/create-identity-pool.zip" ] ]
+            Handler: create_identity_pool.lambda_handler
+            Runtime: python2.7
+            Policies: 
+                - AmazonCognitoPowerUser
+                - IAMFullAccess
+
+    CustomiseStaticFilesFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: "s3://done-lambda-packages.1f55.uk/customise-static-files.zip"
+            # @todo - CF not currently accepting non-string literal CodeUri values
+            # https://github.com/awslabs/serverless-application-model/issues/22
+            #CodeUri: !Join [ "", [ "s3://", !Ref LambdaS3BucketName, "/customise-static-files.zip" ] ]
+            Handler: customise_static_files.lambda_handler
+            Runtime: python2.7
+            Policies: 
+                - AmazonS3FullAccess
+
+    ReceiveVoteFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: "s3://done-lambda-packages.1f55.uk/receive-vote.zip"
+            # @todo - CF not currently accepting non-string literal CodeUri values
+            # https://github.com/awslabs/serverless-application-model/issues/22
+            #CodeUri: !Join [ "", [ "s3://", !Ref LambdaS3BucketName, "/receive-vote.zip" ] ]
+            Handler: receive_vote.lambda_handler
+            Runtime: python2.7
+            Policies: AmazonDynamoDBFullAccess
+            Environment:
+                Variables:
+                    TABLE_NAME: !Ref VoteRecordDynamoDBTable
+            Events:
+                PostEvent:
+                    Type: Api
+                    Properties:
+                        RestApiId: !Ref ReceiveVoteApi
+                        Path: /vote
+                        Method: post
+
+    ReceiveVoteApi:
+        Type: AWS::Serverless::Api
+        Properties:
+            DefinitionUri: "s3://done-lambda-packages.1f55.uk/swagger.yaml"
+            StageName: Prod
+            Variables:
+                LambdaFunctionName: !Ref ReceiveVoteFunction
+
+    AggregateVoteFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: "s3://done-lambda-packages.1f55.uk/aggregate-votes.zip"
+            # @todo - CF not currently accepting non-string literal CodeUri values
+            # https://github.com/awslabs/serverless-application-model/issues/22
+            #CodeUri: !Join [ "", [ "s3://", !Ref LambdaS3BucketName, "/aggregate-votes.zip" ] ]
+            Handler: aggregate_votes.lambda_handler
+            Runtime: python2.7
+            Policies:
+                - AWSLambdaDynamoDBExecutionRole
+                - AmazonDynamoDBFullAccess
+            Environment:
+                Variables:
+                    TABLE_NAME: !Ref VoteAggregateDynamoDBTable
+            Events:
+                Stream:
+                    Type: DynamoDB
+                    Properties:
+                        BatchSize: 100
+                        StartingPosition: LATEST
+                        Stream: !GetAtt VoteRecordDynamoDBTable.StreamArn
+
+    VoteRecordDynamoDBTable:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            AttributeDefinitions:
+                -
+                    AttributeName: VotedFor
+                    AttributeType: S
+            KeySchema:
+                -
+                    AttributeName: VotedFor
+                    KeyType: HASH
+            ProvisionedThroughput:
+                ReadCapacityUnits: 1
+                WriteCapacityUnits: 9
+            StreamSpecification:
+                StreamViewType: NEW_IMAGE
+
+    VoteAggregateDynamoDBTable:
+        Type: AWS::Serverless::SimpleTable
+        Properties:
+            PrimaryKey:
+                Name: VotedFor
+                Type: String
+            ProvisionedThroughput:
+                ReadCapacityUnits: 13
+                WriteCapacityUnits: 2
+
+    CognitoIdentityPoolAuthRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Effect: Allow
+                        Principal:
+                            Federated: "cognito-identity.amazonaws.com"
+                        Action: "sts:AssumeRoleWithWebIdentity"
+
+    CognitoIdentityPoolUnauthRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Effect: Allow
+                        Principal:
+                            Federated: "cognito-identity.amazonaws.com"
+                        Action: "sts:AssumeRoleWithWebIdentity"
+            Policies:
+                -
+                    PolicyName: "dynamodbread"
+                    PolicyDocument:
+                        Version: "2012-10-17"
+                        Statement:
+                            -
+                                Action:
+                                    - dynamodb:GetItem
+                                    - dynamodb:Scan
+                                Effect: Allow
+                                Resource: !Join [ "", ["arn:aws:dynamodb:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId", ":table/", !Ref VoteAggregateDynamoDBTable]]
+
+    CreateIdentityPoolCustomResource:
+        Type: Custom::LambdaFunction
+        Properties:
+            ServiceToken: !GetAtt CreateIdentityPoolFunction.Arn
+            IdentityPoolName: !Ref AWS::StackName
+            IdentityAuthRoleArn: !GetAtt CognitoIdentityPoolAuthRole.Arn
+            IdentityUnauthRoleArn: !GetAtt CognitoIdentityPoolUnauthRole.Arn
+
+    CustomiseStaticFilesCustomResource:
+        Type: Custom::LambdaFunction
+        Properties:
+            ServiceToken: !GetAtt CustomiseStaticFilesFunction.Arn
+            IdentityPoolId: !GetAtt CreateIdentityPoolCustomResource.IdentityPoolId
+            VoteAggregateTable: !Ref VoteAggregateDynamoDBTable
+            ApiGatewayId: !Ref ReceiveVoteApi
+            S3Bucket: !ImportValue VoteWebsiteBucketName
+            S3Key: "refresh.js"
