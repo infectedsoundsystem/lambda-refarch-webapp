@@ -22,7 +22,7 @@ var api_endpoint = '<your-api-gateway-endpoint-here>';
 
 var dynamodb = new AWS.DynamoDB();
 var params = {
-    TableName: 'VoteAppAggregates'
+    TableName: '<your-vote-aggregate-table-name-here>'
 };
 
 /* Create the context for applying the chart to the HTML canvas */
