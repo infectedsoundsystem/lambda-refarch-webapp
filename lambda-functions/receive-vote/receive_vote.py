@@ -31,10 +31,12 @@ def lambda_handler(event, context):
     except Exception as e:
         logger.error('Malformed body in event')
         logger.error(e)
-        return {
-            'status': 'error',
-            'message': 'Oops, please try again',
-        }
+        return send_response(
+            {
+                'status': 'error',
+                'message': 'Oops, please try again',
+            },
+        )
 
     # Test that the vote received is a valid choice
     if voted_for in VOTE_CHOICES:
@@ -63,19 +65,35 @@ def lambda_handler(event, context):
         except Exception as e:
             logger.error('Error recording vote in ' + TABLE_NAME)
             logger.error(e)
-            return {
-                'status': 'error',
-                'message': 'Oops, please try again',
-            }
+            return send_response(
+                {
+                    'status': 'error',
+                    'message': 'Oops, please try again',
+                },
+            )
         else:
             logger.info('Vote received for ' + voted_for)
-            return {
-                'status': 'status',
-            }
+            return send_response(
+                {
+                    'status': 'success',
+                },
+            )
 
     else:
         logger.error('Invalid vote received: ' + voted_for)
-        return {
-            'status': 'error',
-            'message': 'Oops, please try again',
-        }
+        return send_response(
+            {
+                'status': 'error',
+                'message': 'Oops, please try again',
+            },
+        )
+
+
+def send_response(response, statusCode=200):
+    return {
+        'statusCode': statusCode,
+        'headers': {
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps(response),
+    }
