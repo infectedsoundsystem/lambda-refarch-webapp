@@ -1,0 +1,6 @@
+# Generated Lambda function packages go in this directory, don't want to track 
+# them, so ignore everything in this directory
+*
+
+# Except this file
+!.gitignore
