@@ -2,30 +2,13 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: SAM template for Voting App serverless application resources
 Transform: 'AWS::Serverless-2016-10-31'
 
-# @todo - CF not currently accepting non-string literal CodeUri values
-# https://github.com/awslabs/serverless-application-model/issues/22
-#Parameters:
+Parameters:
 
-    # !Join doesn't support !ImportValue so can't import this value from the other stack
-    #LambdaS3BucketName:
-    #    Default: "vote-lambda-packages."
-    #    Description: The name of the S3 bucket created to hold the Lambda packages
-    #    Type: String
+    LambdaS3BucketName:
+        Description: The name of the S3 bucket created to hold the Lambda packages
+        Type: String
 
 Resources:
-
-    CreateIdentityPoolFunction:
-        Type: AWS::Serverless::Function
-        Properties:
-            CodeUri: "s3://done-lambda-packages.1f55.uk/create-identity-pool.zip"
-            # @todo - CF not currently accepting non-string literal CodeUri values
-            # https://github.com/awslabs/serverless-application-model/issues/22
-            #CodeUri: !Join [ "", [ "s3://", !Ref LambdaS3BucketName, "/create-identity-pool.zip" ] ]
-            Handler: create_identity_pool.lambda_handler
-            Runtime: python2.7
-            Policies: 
-                - AmazonCognitoPowerUser
-                - IAMFullAccess
 
     CustomiseStaticFilesFunction:
         Type: AWS::Serverless::Function
@@ -154,13 +137,19 @@ Resources:
                                 Effect: Allow
                                 Resource: !Join [ "", ["arn:aws:dynamodb:", !Ref "AWS::Region", ":", !Ref "AWS::AccountId", ":table/", !Ref VoteAggregateDynamoDBTable]]
 
-    CreateIdentityPoolCustomResource:
-        Type: Custom::LambdaFunction
+    CognitoIdentityPool:
+        Type: AWS::Cognito::IdentityPool
         Properties:
-            ServiceToken: !GetAtt CreateIdentityPoolFunction.Arn
             IdentityPoolName: !Ref AWS::StackName
-            IdentityAuthRoleArn: !GetAtt CognitoIdentityPoolAuthRole.Arn
-            IdentityUnauthRoleArn: !GetAtt CognitoIdentityPoolUnauthRole.Arn
+            AllowUnauthenticatedIdentities: true
+
+    CognitoIdentityPool:
+        Type: AWS::Cognito::IdentityPoolRoleAttachment
+        Properties:
+            IdentityPoolId: !Ref CognitoIdentityPool
+            Roles:
+                authenticated: !GetAtt CognitoIdentityPoolAuthRole.Arn
+                unauthenticated: !GetAtt CognitoIdentityPoolUnauthRole.Arn
 
     CustomiseStaticFilesCustomResource:
         Type: Custom::LambdaFunction
