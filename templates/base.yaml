@@ -91,6 +91,13 @@ Resources:
             TTL: 300
             Type: CNAME
 
+    CognitoIdentityPool:
+        Type: AWS::Cognito::IdentityPool
+        Properties:
+            IdentityPoolName: !Ref AWS::StackName
+            AllowUnauthenticatedIdentities: true
+
+
     BuildProject:
         Type: "AWS::CodeBuild::Project"
         Properties:
