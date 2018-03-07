@@ -1,0 +1,20 @@
+version: 0.2 
+
+phases:
+    install:
+        commands:
+            - echo Install started on `date`
+    pre_build:
+        commands:
+            - echo Pre-install started on `date`
+    build:
+        commands:
+            - echo Build started on `date`
+    post_build:
+        commands:
+            - echo Build completed on `date`
+
+artifacts:
+    files:
+        - "templates/serverless-application-output.yaml"
+    discard-paths: yes

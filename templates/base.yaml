@@ -12,6 +12,7 @@ Parameters:
 
     HostedZone:
         Default: "1f55.uk"
+        MinLength: 1
         Description: Name of the Route 53 hosted zone to create the subdomain under
         Type: String
 
@@ -19,7 +20,28 @@ Parameters:
         Default: Z1XEY900QGE2A8
         Description: ID of the Route 53 hosted zone to create the subdomain under
         Type: String
+        MinLength: 1
+        AllowedPattern: ^[A-Z0-9]*$
+        ConstraintDescription: Must be a valid Hosted Zone Id
 
+    GitHubPersonalAccessToken:
+        Description: GitHub personal access token with repo scope
+        Type: String
+        MinLength: 1
+        AllowedPattern: ^[a-f0-9]*$
+        ConstraintDescription: Must be a valid token
+        NoEcho: true
+
+    GitHubUsername:
+        Description: Your GitHub username
+        Type: String
+        MinLength: 1
+
+    SourceRepository:
+        Default: lambda-refarch-webapp
+        Description: Name of repository hosting this application
+        Type: String
+        MinLength: 1
 
 Resources:
 
@@ -44,7 +66,7 @@ Resources:
                             - s3:GetObject
                         Effect: Allow
                         Resource: !Join [ "", [ "arn:aws:s3:::", !Ref WebsiteBucket, "/*" ] ]
-                        Principal: 
+                        Principal:
                             AWS: "*"
                         Sid: PublicReadForGetBucketObjects
 
@@ -52,6 +74,11 @@ Resources:
         Type: AWS::S3::Bucket
         Properties:
             BucketName: !Join [ "", [ !Ref Subdomain, "-lambda-packages.", !Ref HostedZone ] ]
+
+    ArtifactBucket:
+        Type: AWS::S3::Bucket
+        Properties:
+            BucketName: !Join [ "", [ !Ref Subdomain, "-artifacts.", !Ref HostedZone ] ]
 
     Route53Record:
         Type: AWS::Route53::RecordSet
@@ -64,6 +91,151 @@ Resources:
             TTL: 300
             Type: CNAME
 
+    BuildProject:
+        Type: "AWS::CodeBuild::Project"
+        Properties:
+            Artifacts:
+                Type: CODEPIPELINE
+            Environment:
+                ComputeType: BUILD_GENERAL1_SMALL
+                # @todo - add other env vars for build
+                EnvironmentVariables:
+                    -
+                        Name: AWS_ACCOUNTID
+                        Value: !Ref "AWS::AccountId"
+                Image: "aws/codebuild/eb-python-3.4-amazonlinux-64:2.3.2"
+                Type: LINUX_CONTAINER
+            Name: VoteBuildProject
+            ServiceRole: !GetAtt BuildRole.Arn
+            Source:
+                Type: CODEPIPELINE
+            TimeoutInMinutes: 10
+
+    Pipeline:
+        Type: "AWS::CodePipeline::Pipeline"
+        Properties:
+            ArtifactStore:
+                Location: !Ref ArtifactBucket
+                Type: S3
+            RoleArn: !GetAtt BuildRole.Arn
+            Stages:
+                -
+                    Name: Source
+                    Actions:
+                        -
+                            Name: SourceAction
+                            ActionTypeId:
+                                Category: Source
+                                Owner: ThirdParty
+                                Provider: GitHub
+                                Version: 1
+                            OutputArtifacts:
+                                -
+                                    Name: SourceOutput
+                            Configuration:
+                                Owner: !Ref GitHubUsername
+                                Repo: !Ref SourceRepository
+                                PollForSourceChanges: true
+                                Branch: master
+                                OAuthToken: !Ref GitHubPersonalAccessToken
+                            RunOrder: 1
+                -
+                    Name: Build
+                    Actions:
+                        -
+                            Name: BuildAction
+                            ActionTypeId:
+                                Category: Build
+                                Owner: AWS
+                                Provider: CodeBuild
+                                Version: 1
+                            InputArtifacts:
+                                -
+                                    Name: SourceOutput
+                            OutputArtifacts:
+                                -
+                                    Name: BuildOutput
+                            Configuration:
+                                ProjectName: !Ref BuildProject
+                            RunOrder: 1
+                -
+                    Name: Deploy
+                    Actions:
+                        -
+                            Name: DeployAction
+                            ActionTypeId:
+                                Category: Deploy
+                                Owner: AWS
+                                Provider: CloudFormation
+                                Version: 1
+                            InputArtifacts:
+                                -
+                                    Name: BuildOutput
+                            Configuration:
+                                ActionMode: CHANGE_SET_REPLACE
+                                Capabilities: CAPABILITY_IAM
+                                ChangeSetName: @todo
+                                RoleArn: !GetAtt BuildRole.Arn
+                                StackName: "@todo"
+                                TemplatePath: "BuildOutput::serverless-application-output.yaml"
+                            RunOrder: 1
+                        -
+                            Name: ExecuteChangeSet
+                            ActionTypeId:
+                                Category: Deploy
+                                Owner: AWS
+                                Provider: CloudFormation
+                                Version: 1
+                            Configuration:
+                                ActionMode: CHANGE_SET_EXECUTE
+                                Capabilities: CAPABILITY_IAM
+                                ChangeSetName: @todo
+                                RoleArn: !GetAtt BuildRole.Arn
+                                StackName: "@todo"
+                            RunOrder: 2
+
+    BuildRole:
+        Type: "AWS::IAM::Role"
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                    -
+                        Effect: "Allow"
+                        Principal:
+                            Service:
+                                - "cloudformation.amazonaws.com"
+                                - "codebuild.amazonaws.com"
+                                - "codepipeline.amazonaws.com"
+                        Action:
+                            - "sts:AssumeRole"
+            Policies:
+                -
+                    PolicyName: "BuildPolicy"
+                    PolicyDocument:
+                        Version: "2012-10-17"
+                        Statement:
+                            -
+                                Effect: "Allow"
+                                Action:
+                                    - "cloudformation:*"
+                                    - "cloudwatch:*"
+                                    - "codebuild:*"
+                                    - "codecommit:*"
+                                    - "dynamodb:*"
+                                    - "ec2:*"
+                                    - "ecs:*"
+                                    - "events:*"
+                                    - "iam:*"
+                                    - "lambda:*"
+                                    - "logs:CreateLogGroup"
+                                    - "logs:CreateLogStream"
+                                    - "logs:PutLogEvents"
+                                    - "logs:DescribeLogStreams"
+                                    - "s3:*"
+                                    - "sns:*"
+                                    - "sqs:*"
+                                Resource: "*"
 
 Outputs:
 

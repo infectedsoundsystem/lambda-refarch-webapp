@@ -49,17 +49,23 @@ The services and resources configured by the AWS CloudFormation templates can be
 
 This example demonstrates receiving votes a web page and displaying the vote totals.
 
-Step 1 – Create an AWS CloudFormation stack using the base.yaml template in the templates/ directory. You'll need to enter:
+Step 1 - Fork this GitHub repository
+
+Step 2 - [Create a GitHub personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) with full *repo* scope for [CodePipeline to use](https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-rotate-personal-token-CLI.html).
+
+Step 3 – Create an AWS CloudFormation stack using the base.yaml template in the templates/ directory. You'll need to enter:
 
 - The name of an existing Route 53 hosted zone (e.g. example.com)
 - The id of that hosted zone
 - The subdomain that you want to use (e.g. for vote.example.com just enter the hostname: 'vote')
+- The GitHub personal access token you created in the previous step
+- Your GitHub username (so the fork of this repo can be specified)
 
-Step 2 - Upload the contents of the static/ directory to the S3 bucket created with the FQDN from the last step (e.g. a bucket called 'vote.example.com'). This is where your static files are served from.
+<!--Step 2 - Upload the contents of the static/ directory to the S3 bucket created with the FQDN from the last step (e.g. a bucket called 'vote.example.com'). This is where your static files are served from.-->
 
-Step 3 - Run package.sh to create the Lambda packages. Edit swagger.yaml in the lambda-packages/ directory so it has your AWS Region and Account Id in the marked places, then upload the contents of the lambda-packages/ directory (including swagger.yaml) to your Lambda packages S3 bucket (e.g. the bucket created called vote-lambda-packages.example.com)
+<!--Step 3 - Run package.sh to create the Lambda packages. Edit swagger.yaml in the lambda-packages/ directory so it has your AWS Region and Account Id in the marked places, then upload the contents of the lambda-packages/ directory (including swagger.yaml) to your Lambda packages S3 bucket (e.g. the bucket created called vote-lambda-packages.example.com)-->
 
-Step 4 - Create an AWS CloudFormation change set for a new stack using the serverless_application.yaml template in the templates/ directory. (Note: edit this template first to correct the S3 URI values in each *CodeUri*)
+<!--Step 4 - Create an AWS CloudFormation change set for a new stack using the serverless_application.yaml template in the templates/ directory. (Note: edit this template first to correct the S3 URI values in each *CodeUri*)-->
 
 Congratulations! You now should have a working example of the reference architecture. Now go to the site (e.g. at http://vote.example.com) to see it in action.
 
