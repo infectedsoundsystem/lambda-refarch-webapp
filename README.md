@@ -60,6 +60,7 @@ Step 3 – Create an AWS CloudFormation stack using the base.yaml template in th
 - The subdomain that you want to use (e.g. for vote.example.com just enter the hostname: 'vote')
 - The GitHub personal access token you created in the previous step
 - Your GitHub username (so the fork of this repo can be specified)
+- The repository name if you have changed it, otherwise leave as default
 
 <!--Step 2 - Upload the contents of the static/ directory to the S3 bucket created with the FQDN from the last step (e.g. a bucket called 'vote.example.com'). This is where your static files are served from.-->
 

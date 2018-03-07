@@ -33,6 +33,7 @@ Parameters:
         NoEcho: true
 
     GitHubUsername:
+        Default: infectedsoundsystem
         Description: Your GitHub username
         Type: String
         MinLength: 1
@@ -110,6 +111,21 @@ Resources:
                     -
                         Name: AWS_ACCOUNTID
                         Value: !Ref "AWS::AccountId"
+                    -
+                        Name: COGNITO_IDENTITY_POOL
+                        Value: !Ref CognitoIdentityPool
+                    -
+                        Name: GITHUB_REPO
+                        Value: !Ref SourceRepository
+                    -
+                        Name: GITHUB_TOKEN
+                        Value: !Ref GitHubPersonalAccessToken
+                    -
+                        Name: GITHUB_USERNAME
+                        Value: !Ref GitHubUsername
+                    -
+                        Name: LAMBDA_BUCKET
+                        Value: !Ref LambdaBucket
                 Image: "aws/codebuild/eb-python-3.4-amazonlinux-64:2.3.2"
                 Type: LINUX_CONTAINER
             Name: VoteBuildProject
