@@ -4,17 +4,19 @@ phases:
     install:
         commands:
             - echo Install started on `date`
+            - ./build_dependencies.sh
     pre_build:
         commands:
             - echo Pre-install started on `date`
     build:
         commands:
             - echo Build started on `date`
+            - ./build_package.sh
     post_build:
         commands:
             - echo Build completed on `date`
 
 artifacts:
     files:
-        - "templates/serverless-application-output.yaml"
+        - "serverless-application-output.yaml"
     discard-paths: yes

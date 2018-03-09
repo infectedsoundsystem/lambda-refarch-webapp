@@ -8,34 +8,30 @@ Parameters:
         Description: The name of the S3 bucket created to hold the Lambda packages
         Type: String
 
-    CognitoIdentityPoolId:
-        Description: Cognito identity pool id
-        Type: String
-
 
 Resources:
 
     CustomiseStaticFilesFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: "s3://done-lambda-packages.1f55.uk/customise-static-files.zip"
-            # @todo - CF not currently accepting non-string literal CodeUri values
-            # https://github.com/awslabs/serverless-application-model/issues/22
-            #CodeUri: !Join [ "", [ "s3://", !Ref LambdaS3BucketName, "/customise-static-files.zip" ] ]
+            CodeUri: ../lambda-packages/customise-static-files
             Handler: customise_static_files.lambda_handler
             Runtime: python2.7
+            AutoPublishAlias: prod
+            DeploymentPreference:
+                Type: AllAtOnce
             Policies: 
                 - AmazonS3FullAccess
 
     ReceiveVoteFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: "s3://done-lambda-packages.1f55.uk/receive-vote.zip"
-            # @todo - CF not currently accepting non-string literal CodeUri values
-            # https://github.com/awslabs/serverless-application-model/issues/22
-            #CodeUri: !Join [ "", [ "s3://", !Ref LambdaS3BucketName, "/receive-vote.zip" ] ]
+            CodeUri: ../lambda-packages/receive-vote
             Handler: receive_vote.lambda_handler
             Runtime: python2.7
+            AutoPublishAlias: prod
+            DeploymentPreference:
+                Type: AllAtOnce
             Policies: AmazonDynamoDBFullAccess
             Environment:
                 Variables:
@@ -51,7 +47,7 @@ Resources:
     ReceiveVoteApi:
         Type: AWS::Serverless::Api
         Properties:
-            DefinitionUri: "s3://done-lambda-packages.1f55.uk/swagger.yaml"
+            DefinitionUri: ./swagger.yaml
             StageName: Prod
             Variables:
                 LambdaFunctionName: !Ref ReceiveVoteFunction
@@ -59,12 +55,12 @@ Resources:
     AggregateVoteFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: "s3://done-lambda-packages.1f55.uk/aggregate-votes.zip"
-            # @todo - CF not currently accepting non-string literal CodeUri values
-            # https://github.com/awslabs/serverless-application-model/issues/22
-            #CodeUri: !Join [ "", [ "s3://", !Ref LambdaS3BucketName, "/aggregate-votes.zip" ] ]
+            CodeUri: ../lambda-packages/aggregate-votes
             Handler: aggregate_votes.lambda_handler
             Runtime: python2.7
+            AutoPublishAlias: prod
+            DeploymentPreference:
+                Type: AllAtOnce
             Policies:
                 - AWSLambdaDynamoDBExecutionRole
                 - AmazonDynamoDBFullAccess
@@ -105,6 +101,12 @@ Resources:
             ProvisionedThroughput:
                 ReadCapacityUnits: 13
                 WriteCapacityUnits: 2
+
+    CognitoIdentityPool:
+        Type: AWS::Cognito::IdentityPool
+        Properties:
+            IdentityPoolName: !Ref AWS::StackName
+            AllowUnauthenticatedIdentities: true
 
     CognitoIdentityPoolAuthRole:
         Type: AWS::IAM::Role
