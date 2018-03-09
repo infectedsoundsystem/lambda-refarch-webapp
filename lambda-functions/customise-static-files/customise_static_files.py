@@ -1,6 +1,4 @@
 # Lambda-backed CloudFormation Custom Resource to customise the Vote App static files
-from __future__ import print_function
-
 import boto3
 
 from cfnresponse import FAILED, send, SUCCESS
@@ -62,7 +60,7 @@ class CustomResource(object):
             # Replace the placeholders with the provided values
             with open('/tmp/' + self.key) as input_file, open('/tmp/outputfile', 'w') as output_file:
                 for line in input_file:
-                    for find, replace_with in self.replacements.iteritems():
+                    for find, replace_with in self.replacements.items():
                         line = line.replace(find, replace_with)
                     output_file.write(line)
 

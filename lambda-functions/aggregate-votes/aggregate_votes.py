@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import boto3
 import json
 import logging
@@ -47,7 +45,7 @@ def lambda_handler(event, context):
                 logger.error('Invalid vote: ' + voted_for)
 
     # Update the aggregation table with the votes received for each choice
-    for choice, total in totals.iteritems():
+    for choice, total in totals.items():
         if total < 1:
             continue
 

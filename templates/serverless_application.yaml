@@ -16,7 +16,7 @@ Resources:
         Properties:
             CodeUri: ../lambda-packages/customise-static-files
             Handler: customise_static_files.lambda_handler
-            Runtime: python2.7
+            Runtime: python3.6
             AutoPublishAlias: prod
             DeploymentPreference:
                 Type: AllAtOnce
@@ -28,7 +28,7 @@ Resources:
         Properties:
             CodeUri: ../lambda-packages/receive-vote
             Handler: receive_vote.lambda_handler
-            Runtime: python2.7
+            Runtime: python3.6
             AutoPublishAlias: prod
             DeploymentPreference:
                 Type: AllAtOnce
@@ -57,7 +57,7 @@ Resources:
         Properties:
             CodeUri: ../lambda-packages/aggregate-votes
             Handler: aggregate_votes.lambda_handler
-            Runtime: python2.7
+            Runtime: python3.6
             AutoPublishAlias: prod
             DeploymentPreference:
                 Type: AllAtOnce
