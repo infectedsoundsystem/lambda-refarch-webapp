@@ -2,13 +2,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: SAM template for Voting App serverless application resources
 Transform: 'AWS::Serverless-2016-10-31'
 
-Parameters:
-
-    LambdaS3BucketName:
-        Description: The name of the S3 bucket created to hold the Lambda packages
-        Type: String
-
-
 Resources:
 
     CustomiseStaticFilesFunction:

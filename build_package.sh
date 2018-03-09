@@ -28,4 +28,4 @@ for functiondir in */ ; do
 done
 
 # Packages the Lambda functions and swagger file to S3 ready for deployment, and updates the SAM template
-aws cloudformation package --template-file templates/serverless_application.yaml --s3-bucket $LAMBDA_BUCKET --output-template-file serverless-application-output.yaml
+aws cloudformation package --template-file templates/serverless_application.yaml --s3-bucket $LAMBDA_BUCKET --output-template-file serverless-application-output.yaml --region $AWS_REGION

@@ -92,13 +92,6 @@ Resources:
             TTL: 300
             Type: CNAME
 
-    CognitoIdentityPool:
-        Type: AWS::Cognito::IdentityPool
-        Properties:
-            IdentityPoolName: !Ref AWS::StackName
-            AllowUnauthenticatedIdentities: true
-
-
     BuildProject:
         Type: "AWS::CodeBuild::Project"
         Properties:
@@ -106,23 +99,7 @@ Resources:
                 Type: CODEPIPELINE
             Environment:
                 ComputeType: BUILD_GENERAL1_SMALL
-                # @todo - add other env vars for build
                 EnvironmentVariables:
-                    -
-                        Name: AWS_ACCOUNTID
-                        Value: !Ref "AWS::AccountId"
-                    -
-                        Name: COGNITO_IDENTITY_POOL
-                        Value: !Ref CognitoIdentityPool
-                    -
-                        Name: GITHUB_REPO
-                        Value: !Ref SourceRepository
-                    -
-                        Name: GITHUB_TOKEN
-                        Value: !Ref GitHubPersonalAccessToken
-                    -
-                        Name: GITHUB_USERNAME
-                        Value: !Ref GitHubUsername
                     -
                         Name: LAMBDA_BUCKET
                         Value: !Ref LambdaBucket
@@ -159,7 +136,8 @@ Resources:
                                 Owner: !Ref GitHubUsername
                                 Repo: !Ref SourceRepository
                                 PollForSourceChanges: true
-                                Branch: master
+                                #Branch: master
+                                Branch: automate
                                 OAuthToken: !Ref GitHubPersonalAccessToken
                             RunOrder: 1
                 -
@@ -197,9 +175,9 @@ Resources:
                             Configuration:
                                 ActionMode: CHANGE_SET_REPLACE
                                 Capabilities: CAPABILITY_IAM
-                                ChangeSetName: @todo
+                                ChangeSetName: vote
                                 RoleArn: !GetAtt BuildRole.Arn
-                                StackName: "@todo"
+                                StackName: !Join [ "", [ !Ref Subdomain, "-serverless-application"] ]
                                 TemplatePath: "BuildOutput::serverless-application-output.yaml"
                             RunOrder: 1
                         -
@@ -212,9 +190,9 @@ Resources:
                             Configuration:
                                 ActionMode: CHANGE_SET_EXECUTE
                                 Capabilities: CAPABILITY_IAM
-                                ChangeSetName: @todo
+                                ChangeSetName: vote
                                 RoleArn: !GetAtt BuildRole.Arn
-                                StackName: "@todo"
+                                StackName: !Join [ "", [ !Ref Subdomain, "-serverless-application"] ]
                             RunOrder: 2
 
     BuildRole:
