@@ -219,10 +219,13 @@ Resources:
                             -
                                 Effect: "Allow"
                                 Action:
+                                    - "apigateway:*"
                                     - "cloudformation:*"
                                     - "cloudwatch:*"
                                     - "codebuild:*"
                                     - "codecommit:*"
+                                    - "codedeploy:*"
+                                    - "cognito:*"
                                     - "dynamodb:*"
                                     - "ec2:*"
                                     - "ecs:*"
