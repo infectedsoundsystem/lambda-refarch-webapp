@@ -149,7 +149,7 @@ Resources:
         Type: Custom::LambdaFunction
         Properties:
             ServiceToken: !GetAtt CustomiseStaticFilesFunction.Arn
-            IdentityPoolId: !GetAtt CreateIdentityPoolCustomResource.IdentityPoolId
+            IdentityPoolId: !Ref CognitoIdentityPool
             VoteAggregateTable: !Ref VoteAggregateDynamoDBTable
             ApiGatewayId: !Ref ReceiveVoteApi
             S3Bucket: !ImportValue VoteWebsiteBucketName
