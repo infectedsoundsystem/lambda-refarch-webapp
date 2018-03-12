@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-PIP3=/usr/bin/pip3.4
+PIP3=/usr/bin/pip-3.4
 cwd=$(dirname "$(readlink -f "$0")")
 
 SOURCE_DIR=$cwd/lambda-functions
