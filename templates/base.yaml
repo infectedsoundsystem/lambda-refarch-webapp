@@ -225,7 +225,7 @@ Resources:
                                     - "codebuild:*"
                                     - "codecommit:*"
                                     - "codedeploy:*"
-                                    - "cognito:*"
+                                    - "cognito-identity:*"
                                     - "dynamodb:*"
                                     - "ec2:*"
                                     - "ecs:*"
