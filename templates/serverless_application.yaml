@@ -98,7 +98,7 @@ Resources:
     CognitoIdentityPool:
         Type: AWS::Cognito::IdentityPool
         Properties:
-            IdentityPoolName: !Ref AWS::StackName
+            IdentityPoolName: Fn::Base64: !Ref AWS::StackName
             AllowUnauthenticatedIdentities: true
 
     CognitoIdentityPoolAuthRole:
