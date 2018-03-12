@@ -4,8 +4,7 @@ phases:
     install:
         commands:
             - echo Install started on `date`
-            - ll
-            - echo $USER
+            - chmod +x build_dependencies.sh
             - ./build_dependencies.sh
     pre_build:
         commands:
@@ -13,6 +12,7 @@ phases:
     build:
         commands:
             - echo Build started on `date`
+            - chmod +x build_package.sh
             - ./build_package.sh
     post_build:
         commands:
