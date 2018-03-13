@@ -7,5 +7,5 @@ yum-config-manager --enable epel
 
 yum install -y python34-pip zip
 
-/usr/bin/pip-3.4 install --upgrade setuptools
-/usr/bin/pip-3.4 install --upgrade awscli
+$PIP3 install --upgrade setuptools
+$PIP3 install --upgrade awscli

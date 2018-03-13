@@ -1,5 +1,9 @@
 version: 0.2 
 
+env:
+    variables:
+        PIP3: /usr/bin/pip-3.4
+
 phases:
     install:
         commands:

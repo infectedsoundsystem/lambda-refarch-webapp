@@ -61,10 +61,9 @@ Step 3 – Create an AWS CloudFormation stack using the base.yaml template in th
 - Your GitHub username (so the fork of this repo can be specified)
 - The repository name if you have changed it, otherwise leave as default
 
-Congratulations! After a few minutes, you now should have a working example of the reference architecture. Now go to the site (e.g. at http://vote.example.com) to see it in action.
+Congratulations! After a few minutes, the pipeline will have completed, and you now should have a working example of the reference architecture. Now go to the site (e.g. at http://vote.example.com) to see it in action.
 
 You are able to receive votes in real time, tune your DynamoDB table to handle various levels of incoming traffic, and watch your results change on your dashboard in real time!
-
 
 ## Cleanup
 
