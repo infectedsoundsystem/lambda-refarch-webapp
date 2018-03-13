@@ -18,6 +18,8 @@ phases:
             - echo Build started on `date`
             - chmod +x build_package.sh
             - ./build_package.sh
+            - chmod +x build_deploystaticfiles.sh
+            - ./build_deploystaticfiles.sh
     post_build:
         commands:
             - echo Build completed on `date`
