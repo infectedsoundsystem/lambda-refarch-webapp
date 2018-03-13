@@ -89,9 +89,8 @@ class CustomResource(object):
         send(
             event=self.event,
             context=self.context,
-            response_status=status,
-            reason=self.reason,
-            response_data=self.response_data,
+            responseStatus=status,
+            responseData=self.response_data,
             physical_resource_id=self.physical_resource_id,
         )
 
@@ -101,4 +100,9 @@ def lambda_handler(event, context):
     try:
         getattr(resource, event['RequestType'].lower())()
     except Exception as e:
-        send(event, context, FAILED, reason="Invalid RequestType " + event['RequestType'])
+        send(
+            event=event,
+            context=context,
+            responseStatus=FAILED,
+            responseData=None,
+        )
