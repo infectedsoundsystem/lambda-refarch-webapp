@@ -91,7 +91,7 @@ class CustomResource(object):
             context=self.context,
             responseStatus=status,
             responseData=self.response_data,
-            physical_resource_id=self.physical_resource_id,
+            physicalResourceId=self.physical_resource_id,
         )
 
 
