@@ -106,6 +106,9 @@ Resources:
                     -
                         Name: WEBSITE_BUCKET
                         Value: !Ref WebsiteBucket
+                    -
+                        Name: AWS_ACCOUNT_ID
+                        Value: !Ref "AWS::AccountId"
                 Image: "aws/codebuild/eb-python-3.4-amazonlinux-64:2.3.2"
                 Type: LINUX_CONTAINER
             Name: VoteBuildProject

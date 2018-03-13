@@ -25,9 +25,8 @@ paths:
                         statusCode: 200
                         responseParameters:
                             method.response.header.Access-Control-Allow-Origin: "'*'"
-                # NOTE: Replace <<region>> and <<accountId>> fields
-                #uri: arn:aws:apigateway:<<region>>:lambda:path/2015-03-31/functions/arn:aws:lambda:<<region>>:<<accountId>>:function:${stageVariables.LambdaFunctionName}/invocations
-                uri: arn:aws:apigateway:eu-west-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-west-1:491984616337:function:${stageVariables.LambdaFunctionName}/invocations
+                # NOTE: <<region>> and <<accountId>> fields will be replaced in build
+                uri: arn:aws:apigateway:<<region>>:lambda:path/2015-03-31/functions/arn:aws:lambda:<<region>>:<<accountId>>:function:${stageVariables.LambdaFunctionName}/invocations
 
                 passthroughBehavior: when_no_match
                 httpMethod: POST
