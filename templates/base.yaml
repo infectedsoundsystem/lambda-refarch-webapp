@@ -103,6 +103,9 @@ Resources:
                     -
                         Name: LAMBDA_BUCKET
                         Value: !Ref LambdaBucket
+                    -
+                        Name: WEBSITE_BUCKET
+                        Value: !Ref WebsiteBucket
                 Image: "aws/codebuild/eb-python-3.4-amazonlinux-64:2.3.2"
                 Type: LINUX_CONTAINER
             Name: VoteBuildProject
