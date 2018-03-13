@@ -167,3 +167,6 @@ Resources:
             ApiGatewayId: !Ref ReceiveVoteApi
             S3Bucket: !ImportValue VoteWebsiteBucketName
             S3Key: "refresh.js"
+            # <<timestamp>> to be replaced during build - will force function to
+            # execute on each update
+            Timestamp: "<<timestamp>>"
