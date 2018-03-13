@@ -45,6 +45,19 @@ Resources:
             Variables:
                 LambdaFunctionName: !Ref ReceiveVoteFunction
 
+    # Necessary due to issue with Lambda function not being given perms to allow
+    # API Gateway to access it, see:
+    # https://github.com/awslabs/serverless-application-model/issues/59
+    ReceiveLambdaPermissions:
+        Type: AWS::Lambda::Permission
+        DependsOn:
+            - ReceiveVoteFunction
+            - ReceiveVoteApi
+        Properties:
+            Action: lambda:InvokeFunction
+            FunctionName: !Ref ReceiveVoteFunction
+            Principal: apigateway.amazonaws.com
+
     AggregateVoteFunction:
         Type: AWS::Serverless::Function
         Properties:
