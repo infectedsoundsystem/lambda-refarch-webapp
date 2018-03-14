@@ -101,7 +101,7 @@ function getData() {
                     redCount = greenCount = blueCount = 1;
             }
 
-            var data = [
+            var graphdata = [
                 {
                     value: redCount,
                     color:"#e74c3c",
@@ -123,13 +123,13 @@ function getData() {
             ];
 
             /* Only update if we have new values (preserves tooltips) */
-            if (graph.segments[0].value != data[0].value ||
-                graph.segments[1].value != data[1].value ||
-                graph.segments[2].value != data[2].value
+            if (graph.segments[0].value != graphdata[0].value ||
+                graph.segments[1].value != graphdata[1].value ||
+                graph.segments[2].value != graphdata[2].value
             ) {
-                graph.segments[0].value = data[0].value;
-                graph.segments[1].value = data[1].value;
-                graph.segments[2].value = data[2].value;
+                graph.segments[0].value = graphdata[0].value;
+                graph.segments[1].value = graphdata[1].value;
+                graph.segments[2].value = graphdata[2].value;
                 graph.update();
             }
 
