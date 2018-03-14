@@ -94,10 +94,7 @@ function getData() {
             }
 
             // Prevent graph breaking when 0 votes for all
-            switch (0) {
-                case redCount:
-                case greenCount:
-                case blueCount:
+            if (redCount === 0 && greenCount === 0 && blueCount === 0) {
                     redCount = greenCount = blueCount = 1;
             }
 
