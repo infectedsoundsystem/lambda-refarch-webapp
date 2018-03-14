@@ -44,6 +44,12 @@ Parameters:
         Type: String
         MinLength: 1
 
+    SourceBranch:
+        Default: master
+        Description: Repository branch to use
+        Type: String
+        MinLength: 1
+
 Resources:
 
     WebsiteBucket:
@@ -142,8 +148,7 @@ Resources:
                                 Owner: !Ref GitHubUsername
                                 Repo: !Ref SourceRepository
                                 PollForSourceChanges: true
-                                #Branch: master
-                                Branch: automate
+                                Branch: !Ref SourceBranch
                                 OAuthToken: !Ref GitHubPersonalAccessToken
                             RunOrder: 1
                 -
