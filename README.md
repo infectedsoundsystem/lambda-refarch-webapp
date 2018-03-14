@@ -1,10 +1,10 @@
-# Serverless Reference Architecture: Web Applications
+# AWS Lambda Serverless Reference Architecture: Web Applications
 
 ---
 
 Fork of the original version of [lambda-refarch-webapp](https://github.com/awslabs/lambda-refarch-webapp) as it was at [commit ceda53fc23](https://github.com/awslabs/lambda-refarch-webapp/tree/ceda53fc23f97df8acca5503140f128670a68890), which now resides at [lambda-refarch-voteapp](https://github.com/aws-samples/lambda-refarch-voteapp).
 
-This fork has the following changes:
+[This fork](https://github.com/infectedsoundsystem/lambda-refarch-webapp) has the following changes:
 
 - uses voting via the web page rather than via SMS
 - uses the Python runtime for all Lambda functions
@@ -62,15 +62,17 @@ Step 3 – Create an AWS CloudFormation stack using the base.yaml template in th
 - Your GitHub username (so the fork of this repo can be specified)
 - The repository name if you have changed it, otherwise leave as default
 
-Congratulations! After a few minutes, the pipeline will have completed (check the CodePipeline console for status), and you now should have a working example of the reference architecture. Now go to the site (e.g. at http://vote.example.com) to see it in action.
+Congratulations! After a few minutes, the pipeline will have completed (check the CodePipeline console for status), and you should now have a working example of the reference architecture. Now go to the site (e.g. at http://vote.example.com) to see it in action.
 
 You are able to receive votes in real time, tune your DynamoDB table to handle various levels of incoming traffic, and watch your results change on your dashboard in real time!
 
+Any changes that you make to the application or infrastructure will be automatically reflected when you push the changes back to GitHub. (base.yaml is an exception - any changes to this template need to be applied directly to the CloudFormation stack)
+
 ## Cleanup
 
-To remove all automatically created resources, delete the AWS CloudFormation base stack.
+To remove all automatically created resources, delete the AWS CloudFormation stacks: *-serverless-application first, then the base stack.
 
-Note: Deletion of the S3 buckets will fail unless all files in the bucket are removed before the stack is deleted.
+Note: Deletion of the S3 buckets will fail unless all files in the bucket are removed before the base stack is deleted.
 
 ## License
 
