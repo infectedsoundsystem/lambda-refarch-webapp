@@ -2,15 +2,16 @@
 
 ---
 
-Fork of the original version of [lambda-refarch-webapp](https://github.com/awslabs/lambda-refarch-webapp) as it was at [commit ceda53fc23](https://github.com/awslabs/lambda-refarch-webapp/tree/ceda53fc23f97df8acca5503140f128670a68890). This fork has the following changes: 
+Fork of the original version of [lambda-refarch-webapp](https://github.com/awslabs/lambda-refarch-webapp) as it was at [commit ceda53fc23](https://github.com/awslabs/lambda-refarch-webapp/tree/ceda53fc23f97df8acca5503140f128670a68890), which now resides at [lambda-refarch-voteapp](https://github.com/aws-samples/lambda-refarch-voteapp).
+
+This fork has the following changes:
 
 - uses voting via the web page rather than via SMS
 - uses the Python runtime for all Lambda functions
 - uses YAML for the CloudFormation templates
 - uses the [AWS Serverless Application Model](https://github.com/awslabs/serverless-application-model)
+- uses CodePipeline with CodeBuild to automatically package and then deploy the infrastructure with CloudFormation after every push to the repo
 - uses a Lambda-backed custom resource to automatically set appropriate values in refresh.js (AWS region, Cognito Identity Pool id, API Gateway endpoint, DynamoDB table name)
-- uses CodePipeline with CodeBuild to automatically package and deploy the infrastructure
-- everything automated
 - the voting topic has been changed to something much more likely to incite a flame war ;)
 
 ---
@@ -61,7 +62,7 @@ Step 3 – Create an AWS CloudFormation stack using the base.yaml template in th
 - Your GitHub username (so the fork of this repo can be specified)
 - The repository name if you have changed it, otherwise leave as default
 
-Congratulations! After a few minutes, the pipeline will have completed, and you now should have a working example of the reference architecture. Now go to the site (e.g. at http://vote.example.com) to see it in action.
+Congratulations! After a few minutes, the pipeline will have completed (check the CodePipeline console for status), and you now should have a working example of the reference architecture. Now go to the site (e.g. at http://vote.example.com) to see it in action.
 
 You are able to receive votes in real time, tune your DynamoDB table to handle various levels of incoming traffic, and watch your results change on your dashboard in real time!
 
