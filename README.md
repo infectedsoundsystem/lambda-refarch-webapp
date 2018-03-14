@@ -4,7 +4,7 @@
 
 Fork of the original version of [lambda-refarch-webapp](https://github.com/awslabs/lambda-refarch-webapp) as it was at [commit ceda53fc23](https://github.com/awslabs/lambda-refarch-webapp/tree/ceda53fc23f97df8acca5503140f128670a68890), which now resides at [lambda-refarch-voteapp](https://github.com/aws-samples/lambda-refarch-voteapp).
 
-[This fork](https://github.com/infectedsoundsystem/lambda-refarch-webapp) has the following changes:
+[This fork](https://github.com/mikeshutlar/lambda-refarch-webapp) has the following changes:
 
 - uses voting via the web page rather than via SMS
 - uses the Python runtime for all Lambda functions

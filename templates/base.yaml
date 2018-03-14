@@ -33,7 +33,7 @@ Parameters:
         NoEcho: true
 
     GitHubUsername:
-        Default: infectedsoundsystem
+        Default: mikeshutlar
         Description: Your GitHub username
         Type: String
         MinLength: 1
