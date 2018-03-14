@@ -47,7 +47,7 @@ The services and resources configured by the AWS CloudFormation templates can be
 
 ## Instructions
 
-This example demonstrates receiving votes a web page and displaying the vote totals.
+This example demonstrates receiving votes via a web page and displaying the vote totals.
 
 Step 1 - Fork this GitHub repository
 
