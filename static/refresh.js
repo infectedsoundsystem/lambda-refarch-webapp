@@ -147,12 +147,19 @@ function make_vote(voteFor) {
                 buttons.html(data.message + '<br/>' + buttonHTML);
             } else if (data.status === 'success') {
                 buttons.html('Thanks, your vote has been received!');
+                Cookies.set('voted', 't');
             }
         },
         data: {'Vote': voteFor}
     });
 }
 
-$('#clicky-buttons button').on('click.vote', function() {
-    make_vote($(this).attr('data-vote'));
+$(document).ready(function() {
+    if (Cookies.get('voted') === undefined) {
+        $('#clicky-buttons button').on('click.vote', function() {
+            make_vote($(this).attr('data-vote'));
+        });
+    } else {
+        $('#clicky-buttons').html('Thanks, your vote has been received!')
+    }
 });
