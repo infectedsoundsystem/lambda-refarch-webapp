@@ -83,7 +83,7 @@ class CustomResource(object):
 
     def update(self):
         # Do nothing
-        self.return_status(SUCCESS)
+        self.create()
 
     def return_status(self, status):
         send(
